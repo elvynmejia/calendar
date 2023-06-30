@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { Ref, ref } from 'vue';
+  import { ref } from 'vue';
 
   interface DayProps {
     currentMonth: boolean;
@@ -88,6 +88,14 @@
     return isDaySelected.value = true
   }
 
+  const previousMonth = () => {
+    console.log('previous month');
+  }
+
+  const nextMonth = () => {
+    console.log('next month');
+  }
+
 </script>
 <template>
   <div class="calendar-container">
@@ -96,11 +104,19 @@
         {{ (today.toLocaleString('en-us', { month:'long', year:'numeric' })) }}
       </p>
       <div class="calendar-controls">
-          <div class="tooltip" style="font-size: 20px;">
+          <div
+            class="tooltip"
+            style="font-size: 20px;"
+            @click="previousMonth"
+          >
             &lt;
             <span class="tooltiptext">previous month</span>
           </div>
-          <div class="tooltip" style="font-size: 20px;">
+          <div
+            class="tooltip"
+            style="font-size: 20px;"
+            @click="nextMonth"
+          >
             <span>&gt;</span>
             <span class="tooltiptext">next month</span>
           </div>
@@ -110,7 +126,7 @@
       <div
         v-for="day in ['S', 'M', 'T', 'W', 'T', 'F', 'S']"
         :key="day"
-        class="week-day"
+        class="week-day text-muted"
       >
         {{ day }}
       </div>
@@ -124,7 +140,7 @@
         <div
           v-for="day in week"
           :key="day.dayNumber"
-          class="week-day"
+          class="week-day week-day-pointer"
           :class="getComputedClassesForDay(day, indexOfWeek)"
           v-on:click="() => handleDaySelection(day)"
         >
@@ -182,7 +198,7 @@
     padding: 10px;
   }
 
-  .week-day:hover {
+  .week-day-pointer:hover {
     cursor: pointer;
     border-radius: 50%;
   }
@@ -223,5 +239,9 @@
 
   .tooltip:hover .tooltiptext {
     visibility: visible;
+  }
+
+  .text-muted {
+    opacity: 0.5;
   }
 </style>
