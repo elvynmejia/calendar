@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { Ref, ref } from 'vue';
 
   interface DayProps {
     currentMonth: boolean;
@@ -16,6 +16,8 @@
       today.getFullYear() - 1, today.getMonth(), 1
     )
   );
+
+  const isDaySelected = ref<boolean>(false);
 
   // the day we start the month
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -65,28 +67,40 @@
       dayProps.month,
       dayProps.dayNumber
     );
+    toggleSelected();
   }
 
   const getComputedClassesForDay = (day: DayProps, indexOfWeek: number) => {
     return {
       'current-day': isCurrentDay(day.dayNumber, indexOfWeek),
-      'selected-day': day.date.toDateString() === daySelected?.value.toDateString()
+      'selected-day': (
+        day.date.toDateString() === daySelected?.value.toDateString() && 
+        isDaySelected.value === true
+      )
     }
+  }
+
+  const toggleSelected = () => {
+    if (isDaySelected.value === true) {
+      return isDaySelected.value = false
+    }
+
+    return isDaySelected.value = true
   }
 
 </script>
 <template>
   <div class="calendar-container">
     <div class="calendar-controls-header">
-      <p>
+      <p style="font-size: 20px;">
         {{ (today.toLocaleString('en-us', { month:'long', year:'numeric' })) }}
       </p>
       <div class="calendar-controls">
-          <div class="tooltip">
+          <div class="tooltip" style="font-size: 20px;">
             &lt;
             <span class="tooltiptext">previous month</span>
           </div>
-          <div class="tooltip">
+          <div class="tooltip" style="font-size: 20px;">
             <span>&gt;</span>
             <span class="tooltiptext">next month</span>
           </div>
@@ -105,7 +119,7 @@
       <div
         v-for="(week, indexOfWeek) in calendarGrid"
         :key="week.join('-')"
-        class="calendar-week"
+        class="calendar-week-days"
       >
         <div
           v-for="day in week"
@@ -134,6 +148,7 @@
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 10px;
+    /* background-color: pink; */
   }
 
   .calendar-controls {
@@ -142,6 +157,7 @@
     justify-content: space-between;
     width: 50px;
     align-self: center;
+    /* background-color: blue; */
   }
 
   .calendar-week-days-header {
@@ -151,7 +167,7 @@
     margin-bottom: 15px;
   }
 
-  .calendar-week {
+  .calendar-week-days {
     display: flex;
     flex-direction: row;
     height: 50px;
@@ -168,8 +184,6 @@
 
   .week-day:hover {
     cursor: pointer;
-    /* color: red; */
-    background-color: #ecf0f1;
     border-radius: 50%;
   }
 
@@ -181,7 +195,7 @@
   }
 
   .selected-day {
-    background-color: #3498db;
+    background-color: #74b9ff;
     border-radius: 50%;
     padding: 10px;
     color: white;
@@ -190,6 +204,7 @@
   .tooltip {
     position: relative;
     display: inline-block;
+    font-size: 25px;
   }
   .tooltip .tooltiptext {
     visibility: hidden;
